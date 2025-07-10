@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Velocity & Value Test - Your SaaS Name</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary-gradient: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            --secondary-gradient: linear-gradient(135deg, #7C3AED 0%, #DB2777 100%);
+            --accent-purple: #8B5CF6;
+            --accent-pink: #EC4899;
+            --deep-purple: #4C1D95;
+            --glass-bg: rgba(139, 92, 246, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-shadow: 0 8px 32px 0 rgba(139, 92, 246, 0.3);
+            --bg-dark: #0F0F23;
+            --bg-darker: #050514;
+            --text-primary: #FFFFFF;
+            --text-secondary: #C4B5FD;
+            --text-muted: #8B5CF6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-darker);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(124, 58, 237, 0.2) 0%, transparent 50%);
+            z-index: -1;
+            animation: backgroundShift 20s ease-in-out infinite;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+
+        /* Glass morphism styles */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            border-radius: 24px;
+        }
+
+        .glass-intense {
+            background: rgba(139, 92, 246, 0.15);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 8px 32px 0 rgba(139, 92, 246, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Section transitions */
+        .section {
+            width: 100%;
+            max-width: 800px;
+            display: none;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .section.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* Config Section */
+        .config-card {
+            padding: 3rem;
+            text-align: left;
+        }
+
+        .input-group {
+            margin-bottom: 2rem;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .slider {
+            flex: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 30px rgba(139, 92, 246, 1);
+        }
+
+        .slider-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent-purple);
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .select {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .select:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Button styles */
+        .btn {
+            padding: 1.25rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 8px 32px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 48px rgba(139, 92, 246, 0.6);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { 
+                box-shadow: 0 8px 32px rgba(139, 92, 246, 0.4);
+                transform: scale(1);
+            }
+            50% { 
+                box-shadow: 0 8px 48px rgba(139, 92, 246, 0.8);
+                transform: scale(1.02);
+            }
+        }
+
+        /* Test Section */
+        .test-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .speedometer {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            margin: 2rem 0;
+        }
+
+        .speedometer-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .speedometer-fill {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(
+                from 0deg,
+                var(--accent-purple) 0%,
+                var(--accent-pink) 50%,
+                var(--accent-purple) 100%
+            );
+            clip-path: circle(0% at 50% 50%);
+            transition: clip-path 0.3s ease;
+            filter: blur(2px);
+            opacity: 0.8;
+        }
+
+        .speedometer-value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-shadow: 0 0 20px rgba(139, 92, 246, 0.8);
+            z-index: 10;
+        }
+
+        .speedometer-label {
+            position: absolute;
+            top: 65%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            z-index: 10;
+        }
+
+        .progress-section {
+            width: 100%;
+            max-width: 600px;
+            margin-top: 2rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--primary-gradient);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-text {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        /* Results Section */
+        .results-container {
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .metric-card {
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 48px rgba(139, 92, 246, 0.3);
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+            margin: 0.5rem 0;
+        }
+
+        .metric-label {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .comparison-card {
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .comparison-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .comparison-before .comparison-title {
+            color: #EF4444;
+        }
+
+        .comparison-after .comparison-title {
+            color: var(--accent-purple);
+        }
+
+        .comparison-stat {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin: 0.5rem 0;
+        }
+
+        .comparison-number {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .config-card,
+            .test-container,
+            .results-container {
+                padding: 2rem;
+            }
+            
+            .speedometer {
+                width: 280px;
+                height: 280px;
+            }
+            
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Config Section -->
+        <section id="config-section" class="section active">
+            <div class="header">
+                <h1 class="title">LLM Velocity Test</h1>
+                <p class="subtitle">Unleash the power of your distributed AI infrastructure</p>
+            </div>
+            
+            <div class="config-card glass-intense">
+                <div class="input-group">
+                    <label class="input-label">Number of Edge Devices/Nodes</label>
+                    <div class="slider-container">
+                        <input type="range" class="slider" id="numDevices" min="10" max="1000" value="100">
+                        <span class="slider-value" id="numDevicesValue">100</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Average Compute Specs per Device</label>
+                    <select class="select" id="deviceSpec">
+                        <option value="low">Low Power (e.g., Raspberry Pi-level)</option>
+                        <option value="mid" selected>Mid-Range (e.g., Embedded PC)</option>
+                        <option value="high">High-End Edge AI (e.g., NVIDIA Jetson)</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Target LLM Size (Parameters)</label>
+                    <select class="select" id="llmSize">
+                        <option value="7B">7 Billion</option>
+                        <option value="13B" selected>13 Billion</option>
+                        <option value="30B">30 Billion</option>
+                        <option value="70B">70 Billion</option>
+                    </select>
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button class="btn btn-primary pulse-animation" id="runTestBtn">
+                        RUN VELOCITY TEST
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Test Section -->
+        <section id="test-section" class="section">
+            <div class="test-container glass-intense">
+                <h2 class="title" style="font-size: 2rem; margin-bottom: 1rem;">Optimizing Performance</h2>
+                
+                <div class="speedometer">
+                    <div class="speedometer-bg"></div>
+                    <div class="speedometer-fill" id="speedometerFill"></div>
+                    <div class="speedometer-value" id="speedometerValue">0.0</div>
+                    <div class="speedometer-label">Queries/Sec</div>
+                </div>
+
+                <div class="progress-section">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">Initializing...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section id="results-section" class="section">
+            <div class="results-container glass-intense">
+                <div class="header">
+                    <h2 class="title" style="font-size: 2.5rem;">Performance Unleashed</h2>
+                    <p class="subtitle">Your LLM infrastructure potential revealed</p>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-card glass">
+                        <div class="metric-label">Throughput Boost</div>
+                        <div class="metric-value" id="throughputBoost">0.0X</div>
+                        <div class="metric-description">More queries processed per second</div>
+                    </div>
+                    
+                    <div class="metric-card glass">
+                        <div class="metric-label">Hardware Efficiency</div>
+                        <div class="metric-value" id="efficiencyBoost">0%</div>
+                        <div class="metric-description">Better utilization of existing compute</div>
+                    </div>
+                    
+                    <div class="metric-card glass">
+                        <div class="metric-label">Annual Savings</div>
+                        <div class="metric-value" id="annualSavings">$0</div>
+                        <div class="metric-description">Cost reduction from optimization</div>
+                    </div>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="comparison-card glass comparison-before">
+                        <div class="comparison-title">BEFORE Optimization</div>
+                        <div class="comparison-stat">
+                            Avg. Inferences/Sec: <span class="comparison-number" id="beforeInference">0</span>
+                        </div>
+                        <div class="comparison-stat">
+                            Devices for Workload: <span class="comparison-number" id="beforeDevices">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="comparison-card glass comparison-after">
+                        <div class="comparison-title">AFTER Optimization</div>
+                        <div class="comparison-stat">
+                            Avg. Inferences/Sec: <span class="comparison-number" id="afterInference">0</span>
+                        </div>
+                        <div class="comparison-stat">
+                            Devices for Workload: <span class="comparison-number" id="afterDevices">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 3rem;">
+                    <button class="btn btn-primary" id="demoCta" style="margin-right: 1rem;">
+                        REQUEST LIVE DEMO
+                    </button>
+                    <button class="btn btn-secondary" id="resetBtn">
+                        Recalculate
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = {
+                config: document.getElementById('config-section'),
+                test: document.getElementById('test-section'),
+                results: document.getElementById('results-section')
+            };
+
+            const elements = {
+                numDevices: document.getElementById('numDevices'),
+                numDevicesValue: document.getElementById('numDevicesValue'),
+                deviceSpec: document.getElementById('deviceSpec'),
+                llmSize: document.getElementById('llmSize'),
+                runTestBtn: document.getElementById('runTestBtn'),
+                resetBtn: document.getElementById('resetBtn'),
+                speedometerFill: document.getElementById('speedometerFill'),
+                speedometerValue: document.getElementById('speedometerValue'),
+                progressFill: document.getElementById('progressFill'),
+                progressText: document.getElementById('progressText'),
+                throughputBoost: document.getElementById('throughputBoost'),
+                efficiencyBoost: document.getElementById('efficiencyBoost'),
+                annualSavings: document.getElementById('annualSavings'),
+                beforeInference: document.getElementById('beforeInference'),
+                beforeDevices: document.getElementById('beforeDevices'),
+                afterInference: document.getElementById('afterInference'),
+                afterDevices: document.getElementById('afterDevices')
+            };
+
+            // Utility functions
+            const showSection = (sectionName) => {
+                Object.values(sections).forEach(section => {
+                    section.classList.remove('active');
+                });
+                sections[sectionName].classList.add('active');
+            };
+
+            const animateNumber = (element, start, end, duration, prefix = '', suffix = '') => {
+                let startTime = null;
+                const animate = (currentTime) => {
+                    if (!startTime) startTime = currentTime;
+                    const progress = Math.min((currentTime - startTime) / duration, 1);
+                    const easedProgress = 1 - Math.pow(1 - progress, 3);
+                    const currentValue = start + (end - start) * easedProgress;
+
+                    element.textContent = prefix + Math.round(currentValue).toLocaleString() + suffix;
+
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        element.textContent = prefix + end.toLocaleString() + suffix;
+                    }
+                };
+                requestAnimationFrame(animate);
+            };
+
+            const animateFloat = (element, start, end, duration, decimals = 1, prefix = '', suffix = '') => {
+                let startTime = null;
+                const animate = (currentTime) => {
+                    if (!startTime) startTime = currentTime;
+                    const progress = Math.min((currentTime - startTime) / duration, 1);
+                    const easedProgress = 1 - Math.pow(1 - progress, 3);
+                    const currentValue = start + (end - start) * easedProgress;
+
+                    element.textContent = prefix + currentValue.toFixed(decimals) + suffix;
+
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        element.textContent = prefix + end.toFixed(decimals) + suffix;
+                    }
+                };
+                requestAnimationFrame(animate);
+            };
+
+            // Calculation logic
+            const calculateResults = (numDevices, deviceSpec, llmSize) => {
+                let baseInferencePerDevice = 0;
+                let specMultiplier = 1;
+
+                switch (deviceSpec) {
+                    case 'low':
+                        baseInferencePerDevice = 0.05;
+                        specMultiplier = 7;
+                        break;
+                    case 'mid':
+                        baseInferencePerDevice = 0.2;
+                        specMultiplier = 5;
+                        break;
+                    case 'high':
+                        baseInferencePerDevice = 0.7;
+                        specMultiplier = 3;
+                        break;
+                }
+
+                let llmFactor = 1;
+                switch (llmSize) {
+                    case '7B': llmFactor = 1.2; break;
+                    case '13B': llmFactor = 1.0; break;
+                    case '30B': llmFactor = 0.6; break;
+                    case '70B': llmFactor = 0.3; break;
+                }
+
+                baseInferencePerDevice *= llmFactor;
+
+                const totalBaseInference = baseInferencePerDevice * numDevices;
+                const totalOptimizedInference = totalBaseInference * specMultiplier;
+                const efficiency = Math.min(95, 50 + (specMultiplier * 10));
+
+                const avgDeviceCost = 500;
+                const neededNewDevices = Math.max(0, (totalOptimizedInference / (baseInferencePerDevice * 2)) - numDevices);
+                const avoidedHardwareCost = neededNewDevices * avgDeviceCost * 0.8;
+                const annualOpSavingsPerDevice = 50;
+                const avoidedOpCost = neededNewDevices * annualOpSavingsPerDevice;
+                const totalAnnualSavings = avoidedHardwareCost + avoidedOpCost;
+
+                const beforeDevices = Math.ceil(numDevices * 2);
+                const afterDevices = Math.max(1, Math.ceil(numDevices / specMultiplier));
+
+                return {
+                    totalBaseInference: Math.round(totalBaseInference * 10) / 10,
+                    totalOptimizedInference: Math.round(totalOptimizedInference * 10) / 10,
+                    throughputMultiplier: Math.round(specMultiplier * 10) / 10,
+                    efficiency: Math.round(efficiency),
+                    annualSavings: Math.round(totalAnnualSavings),
+                    beforeDevices: beforeDevices,
+                    afterDevices: afterDevices
+                };
+            };
+
+            // Event listeners
+            elements.numDevices.addEventListener('input', () => {
+                elements.numDevicesValue.textContent = elements.numDevices.value;
+            });
+
+            elements.runTestBtn.addEventListener('click', () => {
+                showSection('test');
+                
+                const numDevices = parseInt(elements.numDevices.value);
+                const deviceSpec = elements.deviceSpec.value;
+                const llmSize = elements.llmSize.value;
+                
+                const results = calculateResults(numDevices, deviceSpec, llmSize);
+                
+                // Reset animations
+                elements.speedometerFill.style.clipPath = 'circle(0% at 50% 50%)';
+                elements.speedometerValue.textContent = '0.0';
+                elements.progressFill.style.width = '0%';
+                elements.progressText.textContent = 'Initializing...';
+
+                let progress = 0;
+                const testInterval = setInterval(() => {
+                    progress += 2;
+                    if (progress > 100) progress = 100;
+
+                    elements.progressFill.style.width = `${progress}%`;
+                    
+                    const currentValue = (results.totalOptimizedInference / 100) * progress;
+                    elements.speedometerValue.textContent = currentValue.toFixed(1);
+                    
+                    elements.speedometerFill.style.clipPath = `circle(${progress / 2}% at 50% 50%)`;
+
+                    if (progress === 100) {
+                        clearInterval(testInterval);
+                        elements.progressText.textContent = 'Optimization Complete!';
+                        setTimeout(() => {
+                            displayResults(results);
+                            showSection('results');
+                        }, 1000);
+                    } else if (progress < 30) {
+                        elements.progressText.textContent = 'Analyzing network topology...';
+                    } else if (progress < 60) {
+                        elements.progressText.textContent = 'Optimizing inference paths...';
+                    } else if (progress < 90) {
+                        elements.progressText.textContent = 'Calibrating performance metrics...';
+                    } else {
+                        elements.progressText.textContent = 'Finalizing optimization...';
+                    }
+                }, 40);
+            });
+
+            const displayResults = (results) => {
+                animateFloat(elements.throughputBoost, 0, results.throughputMultiplier, 1200, 1, '', 'X');
+                animateNumber(elements.efficiencyBoost, 0, results.efficiency, 1200, '', '%');
+                animateNumber(elements.annualSavings, 0, results.annualSavings, 1500, '$', '');
+
+                elements.beforeInference.textContent = results.totalBaseInference;
+                elements.afterInference.textContent = results.totalOptimizedInference;
+                elements.beforeDevices.textContent = results.beforeDevices;
+                elements.afterDevices.textContent = results.afterDevices;
+            };
+
+            elements.resetBtn.addEventListener('click', () => {
+                showSection('config');
+            });
+        });
+    </script>
+</body>
+</html>
